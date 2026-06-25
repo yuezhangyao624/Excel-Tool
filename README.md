@@ -56,7 +56,6 @@ If a person appears multiple times in the attendance file, their minutes are add
 
 The app writes generated results to `attendance_tool/results/` on your computer. That folder is ignored by Git so personal attendance data is not committed accidentally.
 
-## Notes
+## License
 
-This repository does not include a license yet. Add one before publishing publicly if you want other people to have clear permission to use, copy, and modify the code.
-
+This project is licensed under the MIT License. See `LICENSE` for details.
