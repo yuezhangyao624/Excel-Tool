@@ -15,8 +15,14 @@ output/
 *.csv
 *.tsv
 
+# Build artifacts
+build/
+dist/
+*.spec
+*.exe
+*.zip
+
 # System/editor files
 .DS_Store
 .idea/
 .vscode/
-

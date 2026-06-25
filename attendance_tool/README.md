@@ -16,6 +16,12 @@ A small local tool for comparing an enrollment sheet against an actual attendanc
 
 ## Start The Tool
 
+### Windows app
+
+If you downloaded `AttendanceChecker.exe`, double-click it. The app opens your browser automatically. Keep the console window open while using the tool.
+
+### Python
+
 From the repository root:
 
 ```bash

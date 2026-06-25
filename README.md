@@ -25,6 +25,21 @@ The tool runs on your own computer. Uploaded spreadsheets are processed locally 
 
 ## Quick Start
 
+### Windows app, no Python setup
+
+The easiest way to share this with non-technical users is to build the Windows executable in GitHub:
+
+1. Open this repository on GitHub.
+2. Go to **Actions**.
+3. Choose **Build Windows EXE**.
+4. Click **Run workflow**.
+5. When the run finishes, download the `AttendanceChecker-Windows` artifact.
+6. Unzip it and double-click `AttendanceChecker.exe`.
+
+The app opens the browser automatically. Keep the black console window open while using the tool.
+
+### Run from Python
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -55,6 +70,8 @@ If a person appears multiple times in the attendance file, their minutes are add
 ## Privacy
 
 The app writes generated results to `attendance_tool/results/` on your computer. That folder is ignored by Git so personal attendance data is not committed accidentally.
+
+When using the packaged Windows app, results are written to a `results` folder next to `AttendanceChecker.exe`.
 
 ## License
 

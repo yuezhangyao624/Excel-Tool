@@ -4,6 +4,8 @@ import cgi
 import html
 import mimetypes
 import sys
+import threading
+import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -11,7 +13,11 @@ from urllib.parse import unquote, urlparse
 from attendance_processor import AttendanceToolError, analyze_attendance_files
 
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = (
+    Path(sys.executable).resolve().parent
+    if getattr(sys, "frozen", False)
+    else Path(__file__).resolve().parent
+)
 RESULTS_DIR = BASE_DIR / "results"
 MAX_UPLOAD_BYTES = 50 * 1024 * 1024
 
@@ -525,15 +531,43 @@ th {
 </style>"""
 
 
-def run(host: str = "127.0.0.1", port: int = 8765) -> None:
+def create_server(host: str, port: int) -> tuple[ThreadingHTTPServer, int]:
+    last_error: OSError | None = None
+    for candidate_port in range(port, port + 25):
+        try:
+            return ThreadingHTTPServer((host, candidate_port), AttendanceHandler), candidate_port
+        except OSError as exc:
+            last_error = exc
+
+    if last_error is not None:
+        raise last_error
+    raise OSError("Could not start the local server.")
+
+
+def open_browser(url: str) -> None:
+    threading.Timer(0.8, lambda: webbrowser.open(url)).start()
+
+
+def run(host: str = "127.0.0.1", port: int = 8765, launch_browser: bool = False) -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    server = ThreadingHTTPServer((host, port), AttendanceHandler)
-    print(f"Attendance Checker running at http://{host}:{port}")
-    server.serve_forever()
+    server, selected_port = create_server(host, port)
+    url = f"http://{host}:{selected_port}"
+    print(f"Attendance Checker running at {url}")
+    print("Keep this window open while using the tool.")
+    if launch_browser:
+        open_browser(url)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nAttendance Checker stopped.")
+    finally:
+        server.server_close()
 
 
 if __name__ == "__main__":
     selected_port = 8765
-    if len(sys.argv) > 1:
-        selected_port = int(sys.argv[1])
-    run(port=selected_port)
+    launch_browser = getattr(sys, "frozen", False) or "--open-browser" in sys.argv
+    numeric_args = [arg for arg in sys.argv[1:] if arg.isdigit()]
+    if numeric_args:
+        selected_port = int(numeric_args[0])
+    run(port=selected_port, launch_browser=launch_browser)
