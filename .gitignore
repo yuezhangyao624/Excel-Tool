@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.python-version
+.venv/
+venv/
+env/
+
+# Local app outputs and private data
+attendance_tool/results/
+tmp/
+output/
+*.xlsx
+*.xls
+*.csv
+*.tsv
+
+# System/editor files
+.DS_Store
+.idea/
+.vscode/
+
